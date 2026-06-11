@@ -254,6 +254,37 @@ To include diary entries in Org Agenda:
 
 Awqat provides multiple methods and regional presets, but results can differ from local mosque/organization schedules. Always verify against your local authority when needed.
 
-For high latitudes, special handling is supported but may still require manual method selection based on local jurisprudence and season.
+### High latitudes
+
+Awqat supports high-latitude adjustments for Fajr and Isha, and optionally Maghrib.
+
+Available adjustment methods:
+
+- `one-seventh-of-night`
+- `one-third-of-night`
+- `midnight`
+- `angle-based`
+
+You can configure this via:
+
+- `awqat-set-preset-high-latitudes`
+- `awqat-high-latitudes-adjustment-method`
+- `awqat-high-latitudes-adjustment-max-latitude`
+- `awqat-high-latitudes-adjust-maghrib`
+
+Legacy compatibility wrappers are also available:
+
+- `awqat-set-preset-midnight`
+- `awqat-set-preset-one-seventh-of-night`
+
+As with all high-latitude conventions, accepted practice may vary by organization and season, so verify with your local authority.
+
+### Moonsighting Committee Worldwide method
 
 Awqat implements the Moonsighting Committee Worldwide (MCW) method as a latitude/season-aware approach.
+
+For latitudes below 55°N/S, MCW applies seasonal, latitude-dependent offsets and compares them against standard angle-based values.
+
+For latitudes between 55° and 60°N/S, MCW falls back to one-seventh-of-night handling.
+
+For very high latitudes (>60°N/S), use with caution and verify against local guidance.
