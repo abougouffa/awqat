@@ -1,214 +1,234 @@
 # Awqat - Islamic prayer times for Emacs
-Awqat is an Emacs package to calculate the five daily Islamic prayer times. It
-includes also a mode line mode to show the remaining time for the next prayer.
+
+Awqat is an Emacs package that calculates daily Islamic prayer times and provides optional mode-line display, Adhan playback, and desktop notifications.
+
+## Features
+
+- Calculate the six daily times (Fajr, Sunrise, Dhuhr, Asr, Maghrib, Isha)
+- Multiple calculation presets (MWL, Umm al-Qura, Diyanet, MCW, and more)
+- High-latitude adjustment support
+- Mode-line countdown to the next prayer (`awqat-display-prayer-time-mode`)
+- Optional Adhan playback at prayer time (`awqat-adhan-mode`)
+- Optional desktop notifications and pre-notifications (`awqat-notification-mode`)
+- Diary/Org Agenda integration
 
 ## Installation
 
-Awqat is now available in MELPA under the name [awqat](https://melpa.org/#/awqat).  You can install it using your preferred method (Elpaca, straight, M-x list-packages, etc.)
+Awqat is available on [MELPA](https://melpa.org/#/awqat).
 
-### Installation from source
+### Install from source
 
-You can install awqat from source using the following use-package call (note this requires Emacs version 30+):
+Awqat currently requires Emacs **28.1+**.
 
-```lisp
+```elisp
 (use-package awqat
-  :ensure t
-  :vc (:url "https://github.com/zkry/awqat"
+  :vc (:url "https://github.com/abougouffa/awqat"
        :rev :newest))
 ```
 
+### Spacemacs
 
-### Installation for Spacemacs
-If you are using [Spacemacs](https://github.com/syl20bnr/spacemacs) you can
-easily install this package by putting the following in the
-`dotspacemacs-additional-packages`:
-
-```lisp
-dotspacemacs-additional-packages '((awqat :location (recipe
-                                                         :fetcher github
-                                                         :repo "zkry/awqat")))
+```elisp
+dotspacemacs-additional-packages
+'((awqat :location (recipe
+                    :fetcher github
+                    :repo "abougouffa/awqat")))
 ```
 
-And in `dotspacemacs/user-config` adding `(require 'awqat)`.
+Then add `(require 'awqat)` in `dotspacemacs/user-config`.
 
-### Installation for Doom Emacs
-If you are using [Doom Emacs](https://github.com/doomemacs/doomemacs), you can
-declare a custom package in your `packages.el` file:
+### Doom Emacs
 
-```lisp
+In `packages.el`:
+
+```elisp
 (package! awqat
   :recipe (:host github
-           :repo "zkry/awqat"))
+           :repo "abougouffa/awqat"))
 ```
 
-And then, add a suitable configuration based on your location.
+In your config:
 
-```lisp
+```elisp
 (use-package! awqat
   :commands (awqat-display-prayer-time-mode
              awqat-times-for-day)
   :config
   (setq calendar-latitude 44.2
         calendar-longitude 1.3
-        awqat-mode-line-format " 🕌 ${prayer} (${hours}h${minutes}m) "))
+        awqat-mode-line-format " 🕌 ${prayer} (${hours}h${minutes}m) ")
   (awqat-set-preset-muslim-world-league))
 ```
 
-## Setup
-You should have your calendar's latitude and longitude variables set up.
-Evaluate the variables `calendar-latitude` and `calendar-longitude` to see if
-these are set properly.
+## Quick setup
 
-The prayer times can be configured in the following ways:
+At minimum, set your location:
 
-### Fajr
-- If using an angle-based method, you can set the angle to calculate Fajr with
-  the `awqat-fajr-angle` variable. (used in conjunction with the
-  `awqat-use-angle-based-method` function)
-- If using a fixed offset-based method, you can set the hours before sunrise via
-  the `awqat-fajr-before-offset` variable. (used in conjunction with the
-  `awqat-use-time-offset-method` function)
-- For people living in higher latitudes (beyond 48.5N, 48.5S), you can use:
-  - The `awqat-set-preset-midnight` preset which uses the function
-    `awqat--prayer-fajr-midnight` to calculate a prayer time for Fajr based on
-    the midnight method.
-  - The `awqat-set-preset-one-seventh-of-night` preset which uses the function
-    `awqat--prayer-fajr-one-seventh-of-night` to calculate a prayer time for
-    Fajr based on the one-seventh of night method.
+```elisp
+(setq calendar-latitude 52.439
+      calendar-longitude 13.436)
+```
 
-### Sunrise
-- The only customizable variable for sunrise is `awqat-sunrise-sunset-angle`
-  (Defaults to -0.833), which represents the sunrise/sunset zenith angle offset
-  below the horizon. A zero value corresponds to the sun being at zenith=90°,
-  which means that the sun circle is still visible. The apparent radius of the
-  sun at the horizon is 16 arcminutes, and the average refraction is known to be
-  34 arcminutes, which gives an offset of 50 arcminutes, hence the -0.833° value.
-  **You shouldn't change this variable unless you are an astrophysicist!**
+Then choose a preset (recommended):
 
-### Dhuhr
-Dhuhr time corresponds to noon. It is the base for calculating other times.
-Dhuhr does not have a specific configuration. However, you can set safety
-offsets for Dhuhr (see below).
+```elisp
+(awqat-set-preset-muslim-world-league)
+```
+
+Or configure values manually (example):
+
+```elisp
+(setq awqat-asr-hanafi nil
+      awqat-fajr-angle -18.0
+      awqat-isha-angle -17.0)
+```
+
+## Calculation methods and key variables
+
+### Fajr / Isha
+
+- Angle-based method: `awqat-fajr-angle`, `awqat-isha-angle`
+- Offset-based method: `awqat-fajr-before-sunrise-offset`, `awqat-isha-after-sunset-offset`
+- Switch methods with:
+  - `awqat-use-angle-based-method`
+  - `awqat-use-time-offset-method`
+
+### Maghrib / Sunrise
+
+- Default astronomical angle: `awqat-sunrise-sunset-angle` (constant)
+- Optional Maghrib override: `awqat-maghrib-angle`
+- Optional sunset offset mode (used by some presets): `awqat-maghrib-after-sunset-offset`
 
 ### Asr
-- You can set the flag `awqat-asr-hanafi` to `t` to follow the Hanafi opinion on
-  Asr time determination. Or set it to `nil` for the consensus (al-Jomhur)
-  opinion (of Hanbali, Shafii, and Maliki). Defaults to `nil`.
 
-### Maghrib
-- Like the sunrise, only `awqat-sunrise-sunset-angle` can be set. However, it is
-  highly discouraged to change it, unless you have a very strong and justified
-  argument to do!
+- Use Hanafi method by setting `awqat-asr-hanafi` to non-nil.
 
-### Isha
-- Like for Fajr you can set the angle for calculation with the
-  `awqat-isha-angle` variable (used in conjunction with the
-  `awqat-use-angle-based-method` function)
-- If using the offset-based method, you can set the hours after sunset via the
-  `awqat-isha-after-sunset` variable (used in conjunction with the
-  `awqat-use-time-offset-method` function)
-- For people living in higher latitudes (beyond 48.5N, 48.5S), you can use:
-  - The `awqat-set-preset-midnight` preset which uses the function
-    `awqat--prayer-isha-midnight` to calculate a prayer time for Isha based on
-    the midnight method.
-  - The `awqat-set-preset-one-seventh-of-night` preset which uses the function
-    `awqat--prayer-isha-one-seventh-of-night` to calculate a prayer time for
-    Isha based on the one-seventh of night method.
-- For the Moonsighting Committee Worldwide method, an additional parameter can
-  be set for Isha. The `awqat-isha-moonsighting-method` accepts a symbol which
-  can be `'shafaq-ahmar`, `'shafaq-abyad`, or `'shafaq` (which is a combination
-  of _Shafaq Ahmar_ and _Shafaq Abyad_ for high latitudes).
+### High latitudes
+
+Use `awqat-set-preset-high-latitudes` with one of:
+
+- `one-seventh-of-night`
+- `one-third-of-night`
+- `midnight`
+- `angle-based`
+
+Related variables:
+
+- `awqat-high-latitudes-adjustment-method`
+- `awqat-high-latitudes-adjustment-max-latitude`
+- `awqat-high-latitudes-adjust-maghrib`
+
+Compatibility aliases still exist for:
+
+- `awqat-set-preset-midnight`
+- `awqat-set-preset-one-seventh-of-night`
 
 ### Safety offsets
-You can add a safety offset to all times via the `awqat-prayer-safety-offsets`
-variable. For example, to have sunrise be one minute sooner, Dhuhr two minutes
-later, and Maghrib one minute later you can add `(setq
-awqat-prayer-safety-offsets '(0.0 -1.0 2.0 0.0 1.0 0.0))` to your configuration.
 
-### Presets
-There are presets with the angles for various organizations. You can call these
-functions to configure corresponding calculation parameters. The following
-presets are implemented:
+Set prayer safety offsets in minutes with `awqat-prayer-safety-offsets` in order:
 
+`(Fajr Sunrise Dhuhr Asr Maghrib Isha)`
+
+Example:
+
+```elisp
+(setq awqat-prayer-safety-offsets '(0.0 -1.0 2.0 0.0 1.0 0.0))
+```
+
+## Available presets
+
+Main preset functions currently include:
+
+- `awqat-set-preset-diyanet`
+- `awqat-set-preset-diyanet-standard`
 - `awqat-set-preset-muslim-pro`
 - `awqat-set-preset-muslim-world-league`
 - `awqat-set-preset-karachi-university-of-islamic-sciences`
 - `awqat-set-preset-umm-al-qura`
+- `awqat-set-preset-egyptian-general-authority-of-survey`
+- `awqat-set-preset-kuwait`
+- `awqat-set-preset-institute-of-geophysics-university-of-tehran`
+- `awqat-set-preset-jafari`
 - `awqat-set-preset-jakim`
-- `awqat-set-preset-spiritual-administration-of-musilms-russia`
+- `awqat-set-preset-morocco`
+- `awqat-set-preset-taiwan`
+- `awqat-set-preset-dubai`
+- `awqat-set-preset-gulf-region`
+- `awqat-set-preset-qatar`
+- `awqat-set-preset-spiritual-administration-of-muslims-russia`
 - `awqat-set-preset-french-muslims`
 - `awqat-set-preset-grande-mosquee-de-paris`
 - `awqat-set-preset-isna`
-- `awqat-set-preset-egyptian-general-authority-of-survey`
-- `awqat-set-preset-kuwait`
-- `awqat-set-preset-algeria`
-- `awqat-set-preset-morocco`
-- `awqat-set-preset-taiwan`
-- `awqat-set-preset-singapore`
-- `awqat-set-preset-uae`
-- `awqat-set-preset-midnight`
-- `awqat-set-preset-one-seventh-of-night`
+- `awqat-set-preset-portugal`
+- `awqat-set-preset-jordan`
+- `awqat-set-preset-high-latitudes`
 - `awqat-set-preset-moonsighting-committee-worldwide`
-- `awqat-set-preset-institute-of-geophysics-university-of-tehran`
+- `awqat-set-preset-canada-13`
 
-## Configuration example
-The following is an example configuration:
+Additional aliases are available (for example Algeria, UAE, Singapore, Tunisia, Indonesia, and Canada/France variants).
 
-```lisp
-(require 'awqat)
-(setq calendar-latitude 52.439
-      calendar-longitude 13.436)
-(setq awqat-asr-hanafi nil)
-(setq awqat-fajr-angle -18.0)
-(setq awqat-isha-angle -16.0)
+## Usage
+
+### Show today's times
+
+Run:
+
+- `M-x awqat-times-for-day`
+
+### Mode-line countdown
+
+Enable:
+
+```elisp
+(awqat-display-prayer-time-mode 1)
 ```
 
-Here is another example that makes use of the Muslim World League preset:
+Customize with `awqat-mode-line-format`, `awqat-update-interval`, `awqat-warning-duration`, and `awqat-danger-duration`.
 
-```lisp
-(require 'awqat)
-(setq calendar-latitude 52.439
-      calendar-longitude 13.436)
-(setq awqat-asr-hanafi nil)
-(awqat-set-preset-muslim-world-league)
+### Adhan playback
+
+Enable:
+
+```elisp
+(awqat-adhan-mode 1)
 ```
 
-Here is another example that play athan sound on the scheduled time and stop with keyboard shortcut
-```lisp
-(use-package awqat
-  :quelpa (awqat :fetcher github :repo "zkey/awqat")
-  :bind (("C-c r p" . awqat-times-for-day)
-         ("C-c r s" . awqat-stop-adhan))
-  :init
-  (awqat-display-prayer-time-mode 1)
-  (awqat-adhan-mode 1)
-  :config
-  (setq calendar-latitude 40.9
-        calendar-longitude -74.3
-        ;; Executable ffplay required to play mp3 file
-        awqat-adhan-file (expand-file-name "~/Drive/adhan.mp3")
-        awqat-mode-line-format " 🕌 ${prayer} (${hours}h${minutes}m) "
-        awqat-prayer-safety-offsets '(-6.0 -9.0 5.0 4.0 5.0 -1.0)
-        org-agenda-include-diary t)
-  (awqat-set-preset-muslim-world-league)
-  (awqat-set-todays-prayer-times))
-```
+Configure:
 
-Enable desktop notifications: 
+- `awqat-adhan-file` (default file)
+- `awqat-play-adhan-for-times` (per-prayer playback settings)
+- `awqat-audio-player` (auto-detected from `ffplay`, `paplay`, `afplay`, `aplay`)
 
-```lisp
+Stop currently playing Adhan:
+
+- `M-x awqat-stop-adhan`
+
+### Desktop notifications
+
+Enable:
+
+```elisp
 (awqat-notification-mode 1)
 ```
 
-## Viewing the times
-By calling `M-x awqat-times-for-day` you can see the six times for the day,
-alongside the remaining time for the next prayer.
+Main settings:
 
-### Viewing times with Diary/Org-Agenda
-The times can be added to the diary view or org-agenda view using the diary
-functions. In your `diary-file`, add the following lines:
+- `awqat-notifications-enabled`
+- `awqat-notifications-for-times`
+- `awqat-notification-title`
+- `awqat-notification-message-format`
+- `awqat-pre-notifications-enabled`
+- `awqat-pre-notification-minutes`
+- `awqat-pre-notifications-for-times`
+- `awqat-pre-notification-title`
+- `awqat-pre-notification-message-format`
+- `awqat-alert-style`
 
-```
+## Diary and Org Agenda integration
+
+In your `diary-file`:
+
+```text
 %%(awqat-diary-fajr)
 %%(awqat-diary-sunrise)
 %%(awqat-diary-dhuhr)
@@ -217,93 +237,16 @@ functions. In your `diary-file`, add the following lines:
 %%(awqat-diary-isha)
 ```
 
-To use times with Org-mode, set `org-agenda-include-diary` to `t`:
+To include diary entries in Org Agenda:
 
-```lisp
+```elisp
 (setq org-agenda-include-diary t)
 ```
 
-Then in an Org file which is part of `org-agenda-files`, add the following:
+## Notes on calculation methods
 
-```org
-* Prayers
-  :PROPERTIES:
-  :CATEGORY: prayers
-  :END:
-%%(awqat-diary-fajr)
-%%(awqat-diary-sunrise)
-%%(awqat-diary-dhuhr)
-%%(awqat-diary-asr)
-%%(awqat-diary-maghrib)
-%%(awqat-diary-isha)
-```
+Awqat provides multiple methods and regional presets, but results can differ from local mosque/organization schedules. Always verify against your local authority when needed.
 
-The above snippets are, of course, examples. Feel free to modify your liking.
+For high latitudes, special handling is supported but may still require manual method selection based on local jurisprudence and season.
 
-## `awqat-display-prayer-time-mode`
-By running the command `awqat-display-prayer-time-mode` you can view the
-upcoming prayer time in the mode-line which is updated in real-time.
-
-## `awqat-adhan-mode`
-By running the command `awqat-adhan-mode`, an Adhan audio file will be played at
-each prayer time. For this to work, you should have installed `ffplay` (part of
-[FFMPG](https://ffmpeg.org/), used to play mp3 files) or if your Adhan sound
-file is a wav file, you can use `aplay` or `afplay`. Ensure the variable
-`awqat-audio-player` is set to the correct audio player.
-
-Next ensure that `awqat-adhan-file` is set to be the Adhan file to play.
-
-Finally, you can configure `awqat-play-adhan-for-times` to be indicate the
-prayer times you would like to hear the Adhan for. An example value is
-`'("~/Downloads/fajr.mp3" nil t t t t)` to configure a special file to be played
-for Fajr, ignore sunrise, and use the default Adhan file to be played for the
-remaining times.
-
-To stop a playing Adhan, you can run the command `awqat-stop-adhan`.
-
-## Notes on the calculation methods
-Please be warned that this package may contain bugs, the times calculated by
-Awqat may or may not reflect the times of the particular organization that you
-follow. We encourage you to check the Awqat times against the times of your
-organization or your local mosque. Please feel free to open an issue if you
-observe an anomaly in our calculations.
-
-### High latitudes
-The calculations for Isha and Fajr for high latitudes are implemented through
-_**midnight**_, _**three portions of the night**_, _**one-seventh of the
-night**_, and the _**twilight angle-based**_ methods[^prayertimes]; however,
-these methods have not been heavily tested.
-
-If you live in a high latitude place (beyond 48.5°N and 48.5°S), you should
-check your organization or mosque to confirm the accepted method. Also, these
-special methods should only be used when the astronomical signs of twilight
-(Fajr and Isha) are not visible, this occurs only during a specific period of
-the year. Currently, the method cannot determine whether the signs are visible or
-not. So please make sure you are using the alternative method only when the
-signs are not visible.
-
-Note that, the _midnight_ method tries to resolve the problem of estimating the
-Fajr time by choosing the Fajr time to be at _astronomical midnight_. The time
-between sunset and the astronomical midnight is considered to be the Night.
-The _midnight_ method does not clearly define the Isha time, hence you need to
-check with your local organization or mosque to see which time is considered
-Isha's time. Note that some jurisprudence (al-Fiqh الفقه) opinions adopt
-grouping Maghrib and Isha prayers (al-Jam'a الجمع) when astronomical signs are
-not visible (as in high latitudes during some period of time per year).
-
-### Moonsighting Committee Worldwide method
-Awqat implements the Moonsighting Committee Worldwide (MCW) method[^moonsighting].
-This method is location and season aware.
-
-For placed between the equator and 55°, this method defines correction
-**functions based on the latitude and the season** to calculate variable offsets
-from the sunset and sunrise. These offsets are then added or subtracted from the
-sunset/sunrise to get the estimated prayer time. The time estimated using these
-**functions** is then compared to the angle-based time calculated using the 18.0
-angle, the most favorable is used (for Fajr, the latter of the two; for Isha,
-the earlier of the two).
-
-For places between 55° and 60°, the MCW uses the *one-seventh of night* method.
-
-[^prayertimes]: [PrayTimes.org](https://praytimes.org/docs/calculation)
-[^moonsighting]: [Syed Khalid Shaukat, _Fajr and Isha_, September 2015](https://1x.ax/islamic-network/libraries/prayer-times-moonsighting/~raw/master/booklet-fajr-isha.pdf?disposition=ATTACHMENT)
+Awqat implements the Moonsighting Committee Worldwide (MCW) method as a latitude/season-aware approach.
