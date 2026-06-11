@@ -137,35 +137,42 @@ Example:
 
 ## Available presets
 
-Main preset functions currently include:
-
-- `awqat-set-preset-diyanet`
-- `awqat-set-preset-diyanet-standard`
-- `awqat-set-preset-muslim-pro`
-- `awqat-set-preset-muslim-world-league`
-- `awqat-set-preset-karachi-university-of-islamic-sciences`
-- `awqat-set-preset-umm-al-qura`
-- `awqat-set-preset-egyptian-general-authority-of-survey`
-- `awqat-set-preset-kuwait`
-- `awqat-set-preset-institute-of-geophysics-university-of-tehran`
-- `awqat-set-preset-jafari`
-- `awqat-set-preset-jakim`
-- `awqat-set-preset-morocco`
-- `awqat-set-preset-taiwan`
-- `awqat-set-preset-dubai`
-- `awqat-set-preset-gulf-region`
-- `awqat-set-preset-qatar`
-- `awqat-set-preset-spiritual-administration-of-muslims-russia`
-- `awqat-set-preset-french-muslims`
-- `awqat-set-preset-grande-mosquee-de-paris`
-- `awqat-set-preset-isna`
-- `awqat-set-preset-portugal`
-- `awqat-set-preset-jordan`
-- `awqat-set-preset-high-latitudes`
-- `awqat-set-preset-moonsighting-committee-worldwide`
-- `awqat-set-preset-canada-13`
-
-Additional aliases are available (for example Algeria, UAE, Singapore, Tunisia, Indonesia, and Canada/France variants).
+- `awqat-set-preset-midnight`: Obsolete compatibility wrapper (no docstring).
+- `awqat-set-preset-one-seventh-of-night`: Obsolete compatibility wrapper (no docstring).
+- `awqat-set-preset-diyanet`: Set the calculation method defined by Diyanet İşleri Başkanlığı, Turkey.
+- `awqat-set-preset-diyanet-standard`: Set the calculation method to the standard Diyanet İşleri Başkanlığı, Turkey.
+- `awqat-set-preset-muslim-pro`: Use the calculation method defined by the Muslim Pro app, non official.
+- `awqat-set-preset-muslim-world-league`: Use the calculation method defined by the Muslim World League.
+- `awqat-set-preset-karachi-university-of-islamic-sciences`: Use calculation method by Karachi University of Islamic Sciences (KUIS).
+- `awqat-set-preset-umm-al-qura`: Use the calculation method defined by Umm al-Qura University, Makkah.
+- `awqat-set-preset-egyptian-general-authority-of-survey`: Use the calculation method defined by the Egyptian General Authority of Survey.
+- `awqat-set-preset-kuwait`: Use the calculation method used in Kuwait.
+- `awqat-set-preset-institute-of-geophysics-university-of-tehran`: Use calculation method by the Institute of Geophysics, University of Tehran.
+- `awqat-set-preset-jafari`: Use calculation method used by Shia Ithna-Ashari, Leva Institute, Qum.
+- `awqat-set-preset-jakim`: Use calc method by Department of Islamic Development Malaysia (JAKIM).
+- `awqat-set-preset-morocco`: Use the calculation method used in Morocco.
+- `awqat-set-preset-taiwan`: Use the calculation method used in Taiwan.
+- `awqat-set-preset-dubai`: Use the calculation method used in Dubai, UAE.
+- `awqat-set-preset-gulf-region`: Use the calculation method used in some countries in the Gulf region.
+- `awqat-set-preset-qatar`: Use the calculation method use in Qatar.
+- `awqat-set-preset-spiritual-administration-of-muslims-russia`: Use calculation method by Spiritual Administration of Muslims, Russia (SAMR).
+- `awqat-set-preset-french-muslims`: Use calculation method by the French Muslims.
+- `awqat-set-preset-grande-mosquee-de-paris`: Use calculation method similar to one used by Grande Mosquée de Paris, France.
+- `awqat-set-preset-isna`: Use calculation method by Islamic Society of North America (ISNA).
+- `awqat-set-preset-portugal`: Use calculation method defined by Comunidade Islamica de Lisboa.
+- `awqat-set-preset-jordan`: Use calculation method defined by the Ministry of Awqaf, Islamic Affairs and Holy Places, Jordan.
+- `awqat-set-preset-high-latitudes`: Use the calculation METHOD used in higher latitudes.
+- `awqat-set-preset-moonsighting-committee-worldwide`: Use calculation method defined by the Moonsighting Committee Worldwide (MCW).
+- `awqat-set-preset-canada-13`: Use 13° calculation method used in some mosques in Canada.
+- `awqat-set-preset-algeria`: Use calculation method by Ministry of Religious Affairs and Wakfs, Algeria.
+- `awqat-set-preset-france-15`: Use 15° calculation method used in some mosques in France.
+- `awqat-set-preset-france-18`: Use 18° calculation method used in some mosques in France.
+- `awqat-set-preset-indonesia`: Use the calculation method defined by the Kementerian Agama Republik Indonesia.
+- `awqat-set-preset-singapore`: Use the calculation method defined by the Majlis Ugama Islam Singapura.
+- `awqat-set-preset-tunisia`: Use the calculation method used in Tunisia.
+- `awqat-set-preset-uae`: Use the calculation method of UAE General Authority of Islamic Affairs And Endowments.
+- `awqat-set-preset-canada-15`: Use 15° calculation method used in some mosques in Canada.
+- `awqat-set-preset-canada-18`: Use 18° calculation method used in some mosques in Canada.
 
 ## Usage
 
